@@ -2,11 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
-    <title>ASTEROIDS (Mobile Friendly)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ASTEROIDS (Coded with AI)</title>
     <style>
       body {
         margin: 0;
@@ -15,81 +12,26 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center; /* Center content vertically */
+        justify-content: flex-start;
         height: 100vh;
         font-family: monospace;
         color: white;
       }
-      #game-container {
-        display: flex;
-        width: 100vw;
-        height: 100vh;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row; /* Arrange canvas and controls horizontally */
-      }
       #gameCanvas {
         border: 2px solid white;
-        /* Adjust canvas size for horizontal layout */
-        max-width: 70vh; /* Take up to 70% of viewport height */
-        max-height: 100vh;
-        width: auto;
-        height: auto;
-      }
-      #mobile-controls {
-        display: none; /* Hidden by default, shown on mobile */
-        flex: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-around;
-      }
-      .joystick-container,
-      .button-container {
-        width: 100px;
-        height: 100px;
-        position: relative;
-      }
-      .joystick,
-      .shoot-button {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 2px solid white;
-        background-color: rgba(50, 50, 50, 0.7);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        touch-action: none; /* Prevent default touch actions */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2em;
-      }
-      .joystick-inner {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: white;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
+        display: none; /* Hidden initially */
       }
       #game-info {
         text-align: center;
         margin-bottom: 10px;
+        display: none; /* Hidden initially */
       }
       #controls {
         text-align: center;
         margin-top: 10px;
         font-size: smaller;
         color: #999;
+        display: none; /* Hidden initially */
       }
       #powerup-indicator {
         position: absolute;
@@ -195,37 +137,6 @@
         font-size: 1.2em;
         margin-top: 20px;
       }
-
-      /* Mobile Specific Styles */
-      @media (max-width: 768px) {
-        body {
-          flex-direction: column; /* Ensure title/game over screens are vertical */
-        }
-        #game-container {
-          flex-direction: row; /* Keep canvas and controls horizontal */
-        }
-        #gameCanvas {
-          max-width: 70vh; /* Adjust canvas size on mobile */
-          max-height: none; /* Allow full height within its container */
-          height: 100%;
-        }
-        #mobile-controls {
-          display: flex; /* Show mobile controls on small screens */
-        }
-        #controls {
-          display: none; /* Hide keyboard controls on mobile */
-        }
-        #game-info {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          text-align: left;
-        }
-        #combo-text {
-          top: auto;
-          bottom: 10px;
-        }
-      }
     </style>
   </head>
   <body>
@@ -239,19 +150,7 @@
       <p style="font-size: smaller">Coded with AI for the Browser</p>
       <p>Score: <span id="score">0</span> | Lives: <span id="lives">3</span></p>
     </div>
-    <div id="game-container">
-      <canvas id="gameCanvas"></canvas>
-      <div id="mobile-controls">
-        <div class="joystick-container">
-          <div class="joystick">
-            <div class="joystick-inner"></div>
-          </div>
-        </div>
-        <div class="button-container">
-          <div class="shoot-button">FIRE</div>
-        </div>
-      </div>
-    </div>
+    <canvas id="gameCanvas"></canvas>
     <div id="combo-text"></div>
     <div
       id="game-over"
@@ -309,10 +208,6 @@
       const comboTextDisplay = document.getElementById("combo-text");
       const gameInfoDisplay = document.getElementById("game-info");
       const controlsDisplay = document.getElementById("controls");
-      const mobileControls = document.getElementById("mobile-controls");
-      const joystick = document.querySelector(".joystick");
-      const joystickInner = document.querySelector(".joystick-inner");
-      const shootButton = document.querySelector(".shoot-button");
 
       const thrustSound = document.getElementById("thrustSound");
       const fireSound = document.getElementById("fireSound");
@@ -320,8 +215,8 @@
       const playerHitSound = document.getElementById("playerHitSound");
       const powerUpSound = document.getElementById("powerUpSound");
 
-      let canvasWidth = canvas.clientWidth; // Use clientWidth for responsiveness
-      let canvasHeight = canvas.clientHeight;
+      const canvasWidth = window.innerWidth * 0.8;
+      const canvasHeight = window.innerHeight * 0.8;
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
@@ -360,7 +255,7 @@
         angle: 0,
         velocity_x: 0,
         velocity_y: 0,
-        rotation_speed: 0.05, // Adjusted rotation speed for touch
+        rotation_speed: 0.1,
         acceleration: 0.15 * baseScale,
         friction: 0.985,
         max_speed: 5 * baseScale,
@@ -405,9 +300,6 @@
       };
 
       const keyState = {};
-      let joystickActive = false;
-      let joystickDistance = 0;
-      let joystickAngle = 0;
 
       const POWER_UP_TYPES = [
         { name: "Rapid Fire", color: "red" },
@@ -421,12 +313,7 @@
       }
 
       function init() {
-        canvasWidth = canvas.clientWidth;
-        canvasHeight = canvas.clientHeight;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-
-        player = { ...playerSettings, x: canvasWidth / 2, y: canvasHeight / 2 };
+        player = { ...playerSettings };
         asteroids = [];
         projectiles = [];
         powerUps = [];
@@ -460,17 +347,10 @@
         titleScreen.style.display = "none";
         gameInfoDisplay.style.display = "block";
         canvas.style.display = "block";
-        controlsDisplay.style.display = !isMobileDevice(); // Show keyboard controls on desktop
-        mobileControls.style.display = isMobileDevice() ? "flex" : "none"; // Show mobile controls on mobile
+        controlsDisplay.style.display = "block";
         gameStarted = true;
         init();
         draw();
-      }
-
-      function isMobileDevice() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
       }
 
       function initializeStars() {
@@ -500,7 +380,6 @@
       }
 
       function spawnAsteroid(sizeIndex, parentAsteroid) {
-        // ... (rest of the spawnAsteroid function is the same)
         const size = asteroidSettings.sizes[sizeIndex];
         let x, y, angle;
         let velocity_x, velocity_y;
@@ -639,38 +518,21 @@
       }
 
       function updatePlayer() {
-        if (!isMobileDevice()) {
-          if (keyState["ArrowLeft"] || keyState["KeyA"]) {
-            player.angle -= playerSettings.rotation_speed;
-          }
-          if (keyState["ArrowRight"] || keyState["KeyD"]) {
-            player.angle += playerSettings.rotation_speed;
-          }
-          if (keyState["ArrowUp"] || keyState["KeyW"]) {
-            player.velocity_x +=
-              Math.cos(player.angle) * playerSettings.acceleration;
-            player.velocity_y +=
-              Math.sin(player.angle) * playerSettings.acceleration;
-            player.engine_glow_timer = 5;
-            if (performance.now() % 5 < 1) {
-              playSound(thrustSound);
-            }
-          }
-        } else if (joystickActive) {
-          player.angle += joystickAngle;
-          if (joystickDistance > 0) {
-            player.velocity_x +=
-              Math.cos(player.angle) *
-              playerSettings.acceleration *
-              (joystickDistance / 50); // Adjust sensitivity
-            player.velocity_y +=
-              Math.sin(player.angle) *
-              playerSettings.acceleration *
-              (joystickDistance / 50);
-            player.engine_glow_timer = 5;
-            if (performance.now() % 5 < 1) {
-              playSound(thrustSound);
-            }
+        if (keyState["ArrowLeft"] || keyState["KeyA"]) {
+          player.angle -= playerSettings.rotation_speed;
+        }
+        if (keyState["ArrowRight"] || keyState["KeyD"]) {
+          player.angle += playerSettings.rotation_speed;
+        }
+        if (keyState["ArrowUp"] || keyState["KeyW"]) {
+          player.velocity_x +=
+            Math.cos(player.angle) * playerSettings.acceleration;
+          player.velocity_y +=
+            Math.sin(player.angle) * playerSettings.acceleration;
+          player.engine_glow_timer = 5;
+          // Throttle the sound to prevent rapid firing
+          if (performance.now() % 5 < 1) {
+            playSound(thrustSound);
           }
         }
 
@@ -715,7 +577,6 @@
       }
 
       function updateAsteroids() {
-        // ... (rest of the updateAsteroids function is the same)
         for (let i = 0; i < asteroids.length; i++) {
           asteroids[i].x += asteroids[i].velocity_x;
           asteroids[i].y += asteroids[i].velocity_y;
@@ -729,7 +590,6 @@
       }
 
       function updateProjectiles() {
-        // ... (rest of the updateProjectiles function is the same)
         for (let i = projectiles.length - 1; i >= 0; i--) {
           projectiles[i].x += projectiles[i].velocity_x;
           projectiles[i].y += projectiles[i].velocity_y;
@@ -755,7 +615,6 @@
       }
 
       function updatePowerUps() {
-        // ... (rest of the updatePowerUps function is the same)
         if (activePowerUp) {
           const elapsedTime = performance.now() - powerUpStartTime;
           const remainingTime = Math.max(
@@ -776,21 +635,16 @@
       }
 
       function updateExtraLives() {
-        // ... (rest of the updateExtraLives function is the same)
         spawnExtraLife();
         const now = performance.now();
         for (let i = extraLives.length - 1; i >= 0; i--) {
-          if (
-            now - extraLives[i].spawnTime >
-            extraLifeSettings.duration * 1000
-          ) {
+          if (now - extraLives[i].spawnTime > extraLifeSettings.duration * 1000) {
             extraLives.splice(i, 1);
           }
         }
       }
 
       function createImpactFlash(x, y, lastHit) {
-        // ... (rest of the createImpactFlash function is the same)
         let color = "rgba(255, 255, 0, 0.8)"; // Default yellow
         const now = performance.now();
         if (lastHit) {
@@ -811,7 +665,6 @@
       }
 
       function updateImpactFlashes() {
-        // ... (rest of the updateImpactFlashes function is the same)
         for (let i = impactFlashes.length - 1; i >= 0; i--) {
           impactFlashes[i].lifespan--;
           impactFlashes[i].radius += 1;
@@ -820,6 +673,7 @@
           }
         }
       }
+
       function createAsteroidFragments(asteroid) {
         const numFragments = 5 + Math.floor(Math.random() * 5);
         for (let i = 0; i < numFragments; i++) {
@@ -897,12 +751,13 @@
             ) {
               nearMisses++;
               displayFloatingText("Near Miss!", player.x, player.y - 40);
-              asteroids[i].nearMissAwarded = true;
+              asteroids[i].nearMissAwarded = true; // Set the flag for this specific asteroid
             } else if (
               distance >
               playerSettings.radius + asteroids[i].radius + 50
             ) {
-              asteroids[i].nearMissAwarded = false;
+              // Add this condition**
+              asteroids[i].nearMissAwarded = false; // Reset the flag when far enough
             }
           }
         }
@@ -998,7 +853,7 @@
           if (distance < playerSettings.radius + extraLives[i].radius) {
             lives++;
             livesDisplay.textContent = lives;
-            playSound(powerUpSound);
+            playSound(powerUpSound); // Use power up sound for extra life
             extraLives.splice(i, 1);
           }
         }
@@ -1250,8 +1105,7 @@
         gameStarted = true;
         canvas.style.display = "block";
         gameInfoDisplay.style.display = "block";
-        controlsDisplay.style.display = !isMobileDevice();
-        mobileControls.style.display = isMobileDevice() ? "flex" : "none";
+        controlsDisplay.style.display = "block";
       }
 
       function hyperspace() {
@@ -1291,14 +1145,12 @@
       }
 
       document.addEventListener("keydown", (e) => {
-        if (!isMobileDevice()) {
-          keyState[e.code] = true;
-          if (gameStarted && e.code === "Space" && !gameOver) {
-            createProjectile();
-          }
-          if (gameStarted && e.code === "Shift") {
-            hyperspace();
-          }
+        keyState[e.code] = true;
+        if (gameStarted && e.code === "Space" && !gameOver) {
+          createProjectile();
+        }
+        if (gameStarted && e.code === "Shift") {
+          hyperspace();
         }
         if (e.code === "KeyR" && gameOver) {
           resetGame();
@@ -1306,47 +1158,11 @@
       });
 
       document.addEventListener("keyup", (e) => {
-        if (!isMobileDevice()) {
-          keyState[e.code] = false;
-        }
+        keyState[e.code] = false;
       });
 
       startButton.addEventListener("click", startGame);
       restartButton.addEventListener("click", resetGame);
-
-      // Mobile controls event listeners
-      joystick.addEventListener("touchstart", (e) => {
-        joystickActive = true;
-      });
-
-      joystick.addEventListener("touchmove", (e) => {
-        if (!joystickActive) return;
-        const rect = joystick.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - centerX;
-        const deltaY = touch.clientY - centerY;
-        joystickDistance = Math.min(50, Math.sqrt(deltaX ** 2 + deltaY ** 2));
-        joystickAngle = Math.atan2(deltaX, -deltaY) / 50; // Adjust sensitivity
-        const innerX = deltaX * (joystickDistance / 50);
-        const innerY = deltaY * (joystickDistance / 50);
-        joystickInner.style.transform = `translate(${innerX}px, ${innerY}px)`;
-      });
-
-      joystick.addEventListener("touchend", () => {
-        joystickActive = false;
-        joystickDistance = 0;
-        joystickAngle = 0;
-        joystickInner.style.transform = `translate(0px, 0px)`;
-      });
-
-      shootButton.addEventListener("touchstart", (e) => {
-        e.preventDefault(); // Prevent potential double tap zoom
-        if (gameStarted && !gameOver) {
-          createProjectile();
-        }
-      });
 
       // Initial drawing of stars on the title screen
       function drawTitleScreen() {
