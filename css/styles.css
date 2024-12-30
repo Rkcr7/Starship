@@ -143,3 +143,15 @@ body {
   font-size: 1.2em;
   margin-top: 20px;
 }
+#player-name {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid white;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-family: monospace;
+  text-align: center;
+}
+#player-name::placeholder {
+  color: #999;
+}

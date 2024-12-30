@@ -15,6 +15,8 @@ const leaderboardDisplay = document.getElementById("leaderboard");
 const comboTextDisplay = document.getElementById("combo-text");
 const gameInfoDisplay = document.getElementById("game-info");
 const controlsDisplay = document.getElementById("controls");
+const playerNameInput = document.getElementById("player-name");
+const pauseMenu = document.getElementById("pause-menu");
 
 const canvasWidth = window.innerWidth * 0.8;
 const canvasHeight = window.innerHeight * 0.8;
@@ -81,6 +83,7 @@ function hideGameUI() {
 
 function showTitleScreen() {
   titleScreen.style.display = "flex";
+  updateLeaderboardDisplay(gameScores);
 }
 
 function hideTitleScreen() {
@@ -93,7 +96,7 @@ function updateLeaderboardDisplay(scores) {
     const list = document.createElement("ol");
     scores.forEach((s) => {
       const item = document.createElement("li");
-      item.textContent = s;
+      item.textContent = `${s.name}: ${s.score}`;
       list.appendChild(item);
     });
     leaderboardDisplay.appendChild(list);
@@ -107,4 +110,12 @@ function drawTitleScreenBackground(drawStars) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   drawStars();
   requestAnimationFrame(() => drawTitleScreenBackground(drawStars));
+}
+
+function showPauseMenu() {
+  pauseMenu.style.display = "block";
+}
+
+function hidePauseMenu() {
+  pauseMenu.style.display = "none";
 }

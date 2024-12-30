@@ -7,6 +7,9 @@ let asteroidFragments = [];
 let impactFlashes = [];
 // const baseScale = Math.min(canvasWidth / 800, canvasHeight / 600);
 const keyState = {};
+let playerName = "";
+let gamePaused = false;
+let animationFrameId; // Store the animation frame ID
 
 function init() {
   createPlayer();
@@ -42,7 +45,11 @@ function startGame() {
   hideTitleScreen();
   showGameUI();
   gameStarted = true;
+  playerName = playerNameInput.value || "Player";
   init();
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId); // Cancel previous animation frame
+  }
   draw();
 }
 
@@ -117,7 +124,7 @@ function draw() {
 
   drawStars();
 
-  if (gameStarted && !gameOver) {
+  if (gameStarted && !gameOver && !gamePaused) {
     updatePlayer();
     updateAsteroids();
     updateProjectiles();
@@ -135,14 +142,17 @@ function draw() {
     drawAsteroidFragments();
     drawInfoGraphics();
   }
-  requestAnimationFrame(draw);
+  animationFrameId = requestAnimationFrame(draw); // Store the animation frame ID
 }
 
 function resetGame() {
-  init();
+  showTitleScreen();
+  gameStarted = false;
+  hideGameUI();
   hideGameOverScreen();
-  gameStarted = true;
-  showGameUI();
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId); // Cancel animation frame on reset
+  }
 }
 
 function hyperspace() {
@@ -161,25 +171,46 @@ function hyperspace() {
 }
 
 function updateLeaderboard() {
-  gameScores.push(score);
-  gameScores.sort((a, b) => b - a);
+  gameScores.push({ name: playerName, score: score });
+  gameScores.sort((a, b) => b.score - a.score);
   gameScores = gameScores.slice(0, 5);
+  localStorage.setItem("gameScores", JSON.stringify(gameScores));
 }
 
 function displayLeaderboard() {
   updateLeaderboardDisplay(gameScores);
 }
 
+function loadScores() {
+  const storedScores = localStorage.getItem("gameScores");
+  if (storedScores) {
+    gameScores = JSON.parse(storedScores);
+  }
+}
+
+loadScores();
+
 document.addEventListener("keydown", (e) => {
   keyState[e.code] = true;
-  if (gameStarted && e.code === "Space" && !gameOver) {
+  if (gameStarted && e.code === "Space" && !gameOver && !gamePaused) {
     createProjectile(player);
   }
-  if (gameStarted && e.code === "Shift") {
+  if (gameStarted && e.code === "Shift" && !gamePaused) {
     hyperspace();
   }
   if (e.code === "KeyR" && gameOver) {
     resetGame();
+  }
+  if (e.code === "KeyP" && gameStarted && !gameOver) {
+    gamePaused = !gamePaused;
+    if (gamePaused) {
+      showPauseMenu();
+    } else {
+      hidePauseMenu();
+    }
+  }
+  if (e.code === "Enter" && !gameStarted && titleScreen.style.display === "flex") {
+    startGame();
   }
 });
 
