@@ -190,6 +190,7 @@ function createImpactFlash(x, y, lastHit) {
     radius: 10,
     lifespan: 10,
     color: color,
+    type: "fire",
   });
 }
 
@@ -233,10 +234,21 @@ function updateAsteroidFragments() {
 
 function drawImpactFlashes() {
   impactFlashes.forEach((flash) => {
-    ctx.fillStyle = flash.color;
-    ctx.beginPath();
-    ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
-    ctx.fill();
+    if (flash.type === "fire") {
+      ctx.fillStyle = flash.color;
+      ctx.beginPath();
+      ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.beginPath();
+      ctx.arc(flash.x, flash.y, flash.radius * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = flash.color;
+      ctx.beginPath();
+      ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
   });
 }
 

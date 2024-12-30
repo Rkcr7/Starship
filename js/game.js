@@ -212,6 +212,9 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "Enter" && !gameStarted && titleScreen.style.display === "flex") {
     startGame();
   }
+  if (e.code === "KeyG" && gameStarted && !gameOver) {
+    player.is_ghost = !player.is_ghost;
+  }
 });
 
 document.addEventListener("keyup", (e) => {

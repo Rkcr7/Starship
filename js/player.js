@@ -96,15 +96,15 @@ function drawPlayer(activePowerUp, shieldRadius) {
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(playerSettings.front_offset, 0);
-  ctx.lineTo(
-    -playerSettings.base_radius * 0.7,
-    playerSettings.base_radius * 0.7
-  );
-  ctx.lineTo(
-    -playerSettings.base_radius * 0.7,
-    -playerSettings.base_radius * 0.7
-  );
+  ctx.lineTo(-playerSettings.front_offset / 2, playerSettings.front_offset / 2);
+  ctx.lineTo(-playerSettings.front_offset / 2, -playerSettings.front_offset / 2);
   ctx.closePath();
+  if (player.is_ghost) {
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+  } else {
+    ctx.strokeStyle = "white";
+  }
+  ctx.lineWidth = 2;
   ctx.stroke();
 
   if (player.engine_glow_timer > 0) {

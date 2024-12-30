@@ -71,15 +71,19 @@ function drawProjectiles() {
     ctx.arc(projectile.x, projectile.y, projectile.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = `rgba(${
-      projectileColor === "lime" ? "0, 255, 0" : projectileColor
-    }, 0.5)`;
     ctx.lineWidth = 1;
     for (let i = 1; i < projectile.trail.length; i++) {
       ctx.beginPath();
       ctx.moveTo(projectile.trail[i - 1].x, projectile.trail[i - 1].y);
       ctx.lineTo(projectile.trail[i].x, projectile.trail[i].y);
+      ctx.strokeStyle = `rgba(${
+        projectileColor === "lime" ? "0, 255, 0" : projectileColor
+      }, 0.5)`;
       ctx.stroke();
     }
+    ctx.beginPath();
+    ctx.arc(projectile.x, projectile.y, projectile.radius, 0, Math.PI * 2);
+    ctx.fillStyle = projectileColor;
+    ctx.fill();
   });
 }

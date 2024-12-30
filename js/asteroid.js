@@ -92,20 +92,17 @@ function updateAsteroids() {
 
 function drawAsteroids() {
   asteroids.forEach((asteroid) => {
-    ctx.strokeStyle = asteroid.colorVariation;
-    ctx.lineWidth = 2;
     ctx.beginPath();
     asteroid.shape.forEach((vertex, index) => {
-      const x = asteroid.x + vertex.x;
-      const y = asteroid.y + vertex.y;
       if (index === 0) {
-        ctx.moveTo(x, y);
+        ctx.moveTo(asteroid.x + vertex.x, asteroid.y + vertex.y);
       } else {
-        const prevVertex = asteroid.shape[index - 1];
-        ctx.lineTo(x, y);
+        ctx.lineTo(asteroid.x + vertex.x, asteroid.y + vertex.y);
       }
     });
     ctx.closePath();
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1;
     ctx.stroke();
   });
 }
