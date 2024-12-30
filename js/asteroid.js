@@ -57,10 +57,14 @@ function spawnAsteroid(sizeIndex, parentAsteroid) {
     if (Math.random() < 0.1) isFast = true;
     if (Math.random() < asteroidSettings.splitter_probability)
       isSplitter = true;
+    if (Math.random() < Math.min(0.05, score / 10000)) isFast = true;
   }
 
-  const speedMultiplier = isFast ? asteroidSettings.fast_multiplier : 1;
+  const speedMultiplier = isFast
+    ? asteroidSettings.fast_multiplier + Math.min(0.5, score / 10000)
+    : 1;
   const shape = generateAsteroidShape(size);
+  const colorVariation = `rgba(128, 128, 128, ${0.8 + Math.random() * 0.2})`;
 
   asteroids.push({
     x,
@@ -70,7 +74,7 @@ function spawnAsteroid(sizeIndex, parentAsteroid) {
     velocity_y: velocity_y * speedMultiplier,
     size_type: sizeIndex,
     shape: shape,
-    colorVariation: `rgba(128, 128, 128, ${0.8 + Math.random() * 0.2})`,
+    colorVariation: colorVariation,
     isSplitter: isSplitter,
     nearMissAwarded: false,
     lastHitTime: 0,
@@ -92,17 +96,21 @@ function updateAsteroids() {
 
 function drawAsteroids() {
   asteroids.forEach((asteroid) => {
+    ctx.fillStyle = asteroid.colorVariation;
     ctx.beginPath();
     asteroid.shape.forEach((vertex, index) => {
+      const x = asteroid.x + vertex.x;
+      const y = asteroid.y + vertex.y;
       if (index === 0) {
-        ctx.moveTo(asteroid.x + vertex.x, asteroid.y + vertex.y);
+        ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(asteroid.x + vertex.x, asteroid.y + vertex.y);
+        const prevVertex = asteroid.shape[index - 1];
+        ctx.lineTo(x, y);
       }
     });
     ctx.closePath();
     ctx.strokeStyle = "white";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
   });
 }

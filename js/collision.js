@@ -13,7 +13,8 @@ function checkCollisions() {
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (
         distance < playerSettings.radius + asteroids[i].radius &&
-        !(activePowerUp && activePowerUp.name === "Shield")
+        !(activePowerUp && activePowerUp.name === "Shield") &&
+        !player.is_ghost
       ) {
         lives--;
         updateLivesDisplay(lives);
@@ -169,7 +170,7 @@ function checkCollisions() {
   }
 
   if (asteroids.length === 0 && !gameOver) {
-    spawnInitialAsteroids(Math.min(10, 5 + Math.floor(score / 500)));
+    spawnInitialAsteroids(Math.min(15, 5 + Math.floor(score / 200)));
   }
 }
 
@@ -184,14 +185,22 @@ function createImpactFlash(x, y, lastHit) {
       color = "rgba(255, 150, 0, 0.8)"; // More orange
     }
   }
-  impactFlashes.push({
-    x: x,
-    y: y,
-    radius: 10,
-    lifespan: 10,
-    color: color,
-    type: "fire",
-  });
+  const numFlashes = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < numFlashes; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 2;
+    const flashRadius = 5 + Math.random() * 5;
+    const flashColor = `rgba(255, ${
+      100 + Math.random() * 155
+    }, 0, ${0.6 + Math.random() * 0.4})`;
+    impactFlashes.push({
+      x: x + Math.cos(angle) * speed,
+      y: y + Math.sin(angle) * speed,
+      radius: flashRadius,
+      lifespan: 10,
+      color: flashColor,
+    });
+  }
 }
 
 function updateImpactFlashes() {
@@ -234,21 +243,14 @@ function updateAsteroidFragments() {
 
 function drawImpactFlashes() {
   impactFlashes.forEach((flash) => {
-    if (flash.type === "fire") {
-      ctx.fillStyle = flash.color;
-      ctx.beginPath();
-      ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-      ctx.beginPath();
-      ctx.arc(flash.x, flash.y, flash.radius * 0.6, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      ctx.fillStyle = flash.color;
-      ctx.beginPath();
-      ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    ctx.fillStyle = flash.color;
+    ctx.beginPath();
+    ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.beginPath();
+    ctx.arc(flash.x, flash.y, flash.radius * 0.6, 0, Math.PI * 2);
+    ctx.fill();
   });
 }
 

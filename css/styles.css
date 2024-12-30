@@ -13,6 +13,9 @@ body {
 #gameCanvas {
   border: 2px solid white;
   display: none; /* Hidden initially */
+  background-color: black;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 #game-info {
   text-align: center;

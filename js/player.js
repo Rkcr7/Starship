@@ -73,6 +73,11 @@ function updatePlayer() {
       player.is_invulnerable = false;
     }
   }
+  if (activePowerUp && activePowerUp.name === "Ghost Ship") {
+    player.is_ghost = true;
+  } else {
+    player.is_ghost = false;
+  }
 
   shipTrail.push({ x: player.x, y: player.y });
   if (shipTrail.length > trailLength) {
@@ -89,45 +94,18 @@ function drawPlayer(activePowerUp, shieldRadius) {
   ctx.translate(player.x, player.y);
   ctx.rotate(player.angle);
 
-  ctx.shadowBlur = 0;
-  ctx.shadowColor = "transparent";
-
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
+  // Draw the player as a triangle
   ctx.beginPath();
-  ctx.moveTo(playerSettings.front_offset, 0);
-  ctx.lineTo(-playerSettings.front_offset / 2, playerSettings.front_offset / 2);
-  ctx.lineTo(-playerSettings.front_offset / 2, -playerSettings.front_offset / 2);
+  ctx.moveTo(playerSettings.front_offset, 0); // Front point
+  ctx.lineTo(-playerSettings.front_offset / 2, playerSettings.front_offset / 2); // Bottom left
+  ctx.lineTo(-playerSettings.front_offset / 2, -playerSettings.front_offset / 2); // Bottom right
   ctx.closePath();
   if (player.is_ghost) {
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.5)"; // Semi-transparent white
   } else {
     ctx.strokeStyle = "white";
   }
   ctx.lineWidth = 2;
-  ctx.stroke();
-
-  if (player.engine_glow_timer > 0) {
-    ctx.fillStyle = `rgba(255, 165, 0, ${player.engine_glow_timer / 5})`;
-    ctx.beginPath();
-    ctx.moveTo(-playerSettings.front_offset * 0.5, 0);
-    ctx.lineTo(
-      -playerSettings.base_radius * 1.5,
-      playerSettings.base_radius * 0.6
-    );
-    ctx.lineTo(
-      -playerSettings.base_radius * 1.5,
-      -playerSettings.base_radius * 0.6
-    );
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(playerSettings.front_offset * 1.5, 0);
   ctx.stroke();
 
   ctx.restore();

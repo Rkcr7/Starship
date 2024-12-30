@@ -10,7 +10,8 @@ const POWER_UP_TYPES = [
   { name: "Piercing Shot", color: "orange" },
   { name: "Shield", color: "green" },
   { name: "Big Shot", color: "yellow" },
-  { name: "Ghost Ship", color: "white" },
+  { name: "Ghost Ship", color: "purple" },
+  { name: "Scatter Shot", color: "cyan" },
 ];
 
 let powerUps = [];
