@@ -17,6 +17,7 @@ const gameInfoDisplay = document.getElementById("game-info");
 const controlsDisplay = document.getElementById("controls");
 const playerNameInput = document.getElementById("player-name");
 const pauseMenu = document.getElementById("pause-menu");
+const muteIndicator = document.getElementById("mute-indicator");
 
 const canvasWidth = window.innerWidth * 0.8;
 const canvasHeight = window.innerHeight * 0.8;
@@ -118,4 +119,14 @@ function showPauseMenu() {
 
 function hidePauseMenu() {
   pauseMenu.style.display = "none";
+}
+
+function updateMuteIndicator() {
+  if (isMuted) {
+    muteIndicator.textContent = "Muted";
+    muteIndicator.style.backgroundColor = "red";
+  } else {
+    muteIndicator.textContent = "Unmuted";
+    muteIndicator.style.backgroundColor = "green";
+  }
 }

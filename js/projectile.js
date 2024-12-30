@@ -21,6 +21,25 @@ function createProjectile(player) {
   if (activePowerUp && activePowerUp.name === "Big Shot") {
     radius *= 10; // Increased to 5 times bigger
   }
+  if (activePowerUp && activePowerUp.name === "Scatter Shot") {
+    for (let i = -2; i <= 2; i++) {
+      const scatterAngle = angle + (i * Math.PI) / 24; // Reduced spread
+      const cos = Math.cos(scatterAngle);
+      const sin = Math.sin(scatterAngle);
+      projectiles.push({
+        x: player.x + cos * playerSettings.front_offset,
+        y: player.y + sin * playerSettings.front_offset,
+        velocity_x: player.velocity_x + cos * speed,
+        velocity_y: player.velocity_y + sin * speed,
+        lifespan: projectileSettings.lifespan,
+        radius: radius,
+        trail: [],
+        piercing: piercing,
+      });
+    }
+    playSound("fire");
+    return;
+  }
 
   projectiles.push({
     x: player.x + cos * playerSettings.front_offset,

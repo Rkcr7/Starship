@@ -215,6 +215,9 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "KeyG" && gameStarted && !gameOver) {
     player.is_ghost = !player.is_ghost;
   }
+  if (e.code === "KeyM") {
+    toggleMute();
+  }
 });
 
 document.addEventListener("keyup", (e) => {
