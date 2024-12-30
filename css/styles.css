@@ -1,0 +1,145 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  font-family: monospace;
+  color: white;
+}
+#gameCanvas {
+  border: 2px solid white;
+  display: none; /* Hidden initially */
+}
+#game-info {
+  text-align: center;
+  margin-bottom: 10px;
+  display: none; /* Hidden initially */
+}
+/* Add or modify these styles in your <style> section */
+#controls {
+  position: absolute; /* Take it out of the normal document flow */
+  top: 10px; /* Position it 10 pixels from the top */
+  left: 25%; /* Center it horizontally */
+  transform: translateX(-50%); /* Adjust for the element's own width */
+  text-align: center;
+  font-size: smaller;
+  color: #999;
+  /* display: none;  Keep this, it will be shown when the game starts */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); /* Optional: Add a background for better readability */
+  padding: 5px 10px; /* Optional: Add some padding */
+  border-radius: 5px; /* Optional: Rounded corners */
+  z-index: 10; /* Ensure it's above other elements */
+}
+#powerup-indicator {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 200, 0, 0.7);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: none;
+  color: black;
+}
+#powerup-timer {
+  display: block;
+  text-align: center;
+}
+.loading-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid black;
+  border-top: 3px solid transparent;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ship-glow {
+  filter: drop-shadow(0 0 8px white);
+}
+.restart-button {
+  border: 2px solid white;
+  padding: 10px 20px;
+  color: white;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 1em;
+  margin-top: 15px;
+}
+.leaderboard {
+  margin-top: 20px;
+  text-align: left;
+}
+.leaderboard h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+.leaderboard ol {
+  padding-left: 20px;
+}
+.leaderboard li {
+  margin-bottom: 5px;
+}
+.floating-text {
+  position: absolute;
+  animation: floatText 1s ease-out forwards;
+  font-size: 1em;
+  pointer-events: none;
+}
+@keyframes floatText {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+#combo-text {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  left: 10px; /* Adjust as needed */
+  font-size: 1.5em;
+  color: orange;
+  display: none;
+}
+/* Title Screen Styles */
+#title-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#start-button {
+  border: 2px solid white;
+  padding: 15px 30px;
+  color: white;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
