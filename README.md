@@ -4,7 +4,7 @@ A modern take on the classic Asteroids arcade game, developed using HTML5 Canvas
 
 🎮 **[Play Now](https://starship-cr7.netlify.app)**
 
-![Favicon](public/favicon.ico)
+![Starship Gameplay](public/starship.gif)
 
 ## 🎮 Game Features
 
